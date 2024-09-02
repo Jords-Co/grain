@@ -4,8 +4,15 @@
     "rootDir": ".",
     "baseUrl": "./",
     "paths": {
-      "$utils/*": ["src/utils/*"]
+      "$digerati/*": [
+        "src/digerati/*"
+      ],
+      "$grain/*": [
+        "src/grain/*"
+      ]
     },
-    "types": ["@finsweet/ts-utils"]
+    "types": [
+      "@finsweet/ts-utils"
+    ]
   }
 }
