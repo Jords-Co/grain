@@ -1,1 +1,441 @@
-"use strict";(()=>{var s=()=>{let t=document.querySelector('[dd-skip-to-main-content="trigger"]'),e=document.querySelector('[dd-skip-to-main-content="target"]');!t||!e||["click","keypress"].forEach(r=>{t.addEventListener(r,a=>{a.type==="keydown"&&a.which!==13||(a.preventDefault(),e.setAttribute("tabindex","-1"),e.focus())})})};var l=()=>{let t=document.querySelector('[dd-date="current-year"]');if(!t)return;let e=new Date().getFullYear();t.innerText=e.toString()};var i=()=>{var t;clearInterval(t),e();function e(){t=setInterval(function(){var r=$(".w-tab-pane"),a=$(".layout219_tabs-link"),o=$(".w-tab-content").children(".w--tab-active:first"),c=o.next(),u=$(".layout219_tabs-menu").children(".w--current:first"),n=u.next();n.length?(a.attr("aria-selected",!1),n.attr("aria-selected",!0),a.removeClass("w--current"),n.addClass("w--current"),r.removeClass("w--tab-active"),c.addClass("w--tab-active")):(a.removeClass("w--current"),$(".layout219_tabs-link:first").addClass("w--current"),a.attr("aria-selected",!1),$(".layout219_tabs-link:first").attr("aria-selected",!0),r.removeClass("w--tab-active"),$(".w-tab-pane:first").addClass("w--tab-active"))},5e3)}$(".layout219_tabs-link").click(function(r){r.preventDefault(),$tab=$(this).data("wTab"),$image=$(`.w-tab-pane[data-w-tab="${$tab}"]`),$(".layout219_tabs-link").removeClass("w--current"),$(".w-tab-pane").removeClass("w--tab-active"),$(this).addClass("w--current"),$($image).addClass("w--tab-active"),clearInterval(t),e()})};window.Webflow;window.Webflow.push(()=>{s(),l(),i()});})();
+"use strict";
+(() => {
+  // bin/live-reload.js
+  new EventSource(`${"http://localhost:3000"}/esbuild`).addEventListener("change", () => location.reload());
+
+  // src/digerati/skipToMainContent.ts
+  var skipToMainContent = () => {
+    const trigger = document.querySelector('[dd-skip-to-main-content="trigger"]'), target = document.querySelector('[dd-skip-to-main-content="target"]');
+    if (!trigger || !target) {
+      return;
+    }
+    ["click", "keypress"].forEach((event) => {
+      trigger.addEventListener(event, (e) => {
+        if (e.type === "keydown" && e.which !== 13) {
+          return;
+        }
+        e.preventDefault();
+        target.setAttribute("tabindex", "-1");
+        target.focus();
+      });
+    });
+  };
+
+  // src/digerati/currentYear.ts
+  var currentYear = () => {
+    const target = document.querySelector('[dd-date="current-year"]');
+    if (!target) {
+      return;
+    }
+    const fullYear = (/* @__PURE__ */ new Date()).getFullYear();
+    target.innerText = fullYear.toString();
+  };
+
+  // src/grain/autoPlayTabs.ts
+  var autoPlayTabs = () => {
+    var tabInterval;
+    clearInterval(tabInterval);
+    tabLoop2();
+    function tabLoop2() {
+      tabInterval = setInterval(function() {
+        var $allImages = $(".w-tab-pane");
+        var $allTabs = $(".layout219_tabs-link");
+        var $currentImage = $(".w-tab-content").children(".w--tab-active:first");
+        var $nextImage = $currentImage.next();
+        var $current = $(".layout219_tabs-menu").children(".w--current:first");
+        var $next = $current.next();
+        if ($next.length) {
+          $allTabs.attr("aria-selected", false);
+          $next.attr("aria-selected", true);
+          $allTabs.removeClass("w--current");
+          $next.addClass("w--current");
+          $allImages.removeClass("w--tab-active");
+          $nextImage.addClass("w--tab-active");
+        } else {
+          $allTabs.removeClass("w--current");
+          $(".layout219_tabs-link:first").addClass("w--current");
+          $allTabs.attr("aria-selected", false);
+          $(".layout219_tabs-link:first").attr("aria-selected", true);
+          $allImages.removeClass("w--tab-active");
+          $(".w-tab-pane:first").addClass("w--tab-active");
+        }
+        ;
+      }, 5e3);
+    }
+    ;
+    $(".layout219_tabs-link").click(function(e) {
+      e.preventDefault();
+      $tab = $(this).data("wTab");
+      $image = $(`.w-tab-pane[data-w-tab="${$tab}"]`);
+      $(".layout219_tabs-link").removeClass("w--current");
+      $(".w-tab-pane").removeClass("w--tab-active");
+      $(this).addClass("w--current");
+      $($image).addClass("w--tab-active");
+      clearInterval(tabInterval);
+      tabLoop2();
+    });
+  };
+
+  // src/grain/charts.ts
+  var charts = () => {
+    if (!document.getElementById("myChart")) {
+      return;
+    }
+    const data = {
+      datasets: [{
+        backgroundColor: [
+          "rgb(0, 157, 224)",
+          "rgb(230, 230, 230)"
+        ],
+        hoverBackgroundColor: [
+          "rgb(0, 157, 224)",
+          "rgb(230, 230, 230)"
+        ],
+        borderColor: [
+          "rgb(0, 157, 224)",
+          "rgb(230, 230, 230)"
+        ],
+        hoverBorderColor: [
+          "rgb(0, 157, 224)",
+          "rgb(230, 230, 230)"
+        ],
+        hoverBorder: 0,
+        data: [
+          3500,
+          1500
+        ],
+        borderRadius: 1e3
+      }]
+    };
+    const config = {
+      type: "doughnut",
+      data,
+      options: {
+        layout: {
+          padding: {
+            left: 20,
+            right: 20
+          }
+        },
+        circumference: 270,
+        rotation: -135,
+        animation: false,
+        cutout: "85%",
+        onHover: function(e) {
+          const point = e.chart.getElementsAtEventForMode(e, "nearest", { intersect: true }, false);
+          if (point.length && point[0].index === 0) {
+            e.native.target.style.cursor = "grab";
+          } else {
+            e.native.target.style.cursor = "default";
+          }
+        },
+        onClick: function(e) {
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: false
+          },
+          centerText: {},
+          sliderButton: {}
+        }
+      }
+    };
+    const CREDIT_DETAILS = {
+      150: {
+        line: "150",
+        deposit: 150,
+        sign_up_fee: 5,
+        credit_check: false,
+        apr: 15
+      },
+      /*
+      400: {
+        line: '400',
+         deposit: 200,
+         sign_up_fee: 25,
+         credit_check: false,
+         apr: 15,
+      },
+      */
+      500: {
+        line: "500",
+        deposit: 500,
+        sign_up_fee: 5,
+        credit_check: false,
+        apr: 15
+      },
+      /*
+      600: {
+         line: '600',
+         deposit: 252,
+         sign_up_fee: 25,
+         credit_check: false,
+         apr: 15,
+      },
+      750: {
+         line: '750',
+         deposit: null,
+         sign_up_fee: 56.25,
+         credit_check: false,
+         apr: 15,
+      },
+      1000: {
+         line: '1,000',
+         deposit: null,
+         sign_up_fee: 75,
+         credit_check: false,
+         apr: 15,
+      },
+      */
+      1500: {
+        line: "1,500",
+        deposit: 1500,
+        sign_up_fee: 5,
+        credit_check: false,
+        apr: 15
+      },
+      /*
+      2000: {
+         line: '2,000',
+         deposit: null,
+         sign_up_fee: 85,
+         credit_check: true,
+         apr: 19,
+      },
+      */
+      2500: {
+        line: "2,500",
+        deposit: 2500,
+        sign_up_fee: 5,
+        credit_check: false,
+        apr: 15
+      },
+      /*
+      3000: {
+         line: '3,000',
+         deposit: null,
+         sign_up_fee: 85,
+         credit_check: true,
+         apr: 19,
+      },
+      */
+      3500: {
+        line: "3,500",
+        deposit: 3500,
+        sign_up_fee: 5,
+        credit_check: false,
+        apr: 15
+      },
+      /*
+      4000: {
+         line: '4,000',
+         deposit: null,
+         sign_up_fee: 85,
+         credit_check: true,
+         apr: 19,
+      },
+      */
+      5e3: {
+        line: "5,000",
+        deposit: 5e3,
+        sign_up_fee: 5,
+        credit_check: false,
+        apr: 15
+      }
+    };
+    function getCreditFromPercentage(percentage2) {
+      if (percentage2 === 100) {
+        return 5e3;
+      }
+      if (percentage2 >= 70) {
+        return 3500;
+      }
+      if (percentage2 >= 50) {
+        return 2500;
+      }
+      if (percentage2 >= 30) {
+        return 1500;
+      }
+      if (percentage2 >= 10) {
+        return 500;
+      }
+      return 150;
+    }
+    let element, scale, datasetIndex, index, value, degrees, myChart, activePoint;
+    let percentage = 70;
+    let creditLine = 3500;
+    const getCoordinates = (theta, radius) => {
+      const radians = theta * Math.PI / 180;
+      return {
+        x: radius * Math.cos(radians),
+        y: radius * Math.sin(radians)
+      };
+    };
+    Chart.register({
+      id: "centerText",
+      afterDraw: function(chart, args, options) {
+        const {
+          ctx,
+          chartArea: {
+            left,
+            top,
+            height,
+            width,
+            bottom,
+            right
+          }
+        } = chart;
+        ctx.save();
+      }
+    }, {
+      id: "sliderButton",
+      afterDraw: function(chart, args, options) {
+        const {
+          ctx,
+          data: data2
+        } = chart;
+        const movingData = data2.datasets[0].data[0];
+        const total = movingData + data2.datasets[0].data[1];
+        const coords = getCoordinates(movingData / total * 270 + 130, 120);
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = "#fff";
+        ctx.arc(
+          Math.floor(coords.x) + 150,
+          Math.floor(coords.y) + 145 + 20,
+          16,
+          0,
+          2 * Math.PI
+        );
+        ctx.lineWidth = 6;
+        ctx.strokeStyle = "rgb(0, 157, 224)";
+        ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+        ctx.shadowOffsetY = 20;
+        ctx.shadowBlur = 30;
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+        ctx.shadowColor = null;
+        ctx.shadowOffsetY = null;
+        ctx.shadowBlur = null;
+      }
+    });
+    myChart = new Chart(document.getElementById("myChart"), config);
+    d3.select(myChart.canvas).call(
+      d3.drag().container(myChart.canvas).on("start", getActivePoint).on("drag", updateData).on("end", callback)
+    );
+    setCreditDetails();
+    updateCreditLine();
+    function getActivePoint(event, d) {
+      activePoint = myChart._active[0];
+    }
+    function getDegrees(cx, cy) {
+      const {
+        chartArea: {
+          bottom,
+          left,
+          right,
+          height,
+          width
+        }
+      } = myChart;
+      let radians = Math.atan2(cy - bottom / 2, cx - right / 2) - Math.atan2(bottom - bottom / 2, left - right / 2);
+      degrees = Math.floor(radians * (180 / Math.PI));
+      if (degrees < 10 && degrees >= -45) {
+        degrees = 10;
+      } else if (degrees < 0) {
+        degrees = degrees + 360;
+      }
+      degrees = degrees > 270 ? 270 : degrees;
+      return degrees;
+    }
+    function updateData(event, d) {
+      datasetIndex = activePoint?.datasetIndex;
+      index = activePoint?.index || 0;
+      const total = myChart.data.datasets[0].data[0] + myChart.data.datasets[0].data[1];
+      if (index != 0) {
+        return;
+      }
+      degrees = getDegrees(event.x, event.y);
+      percentage = Math.ceil(degrees / 270 * 100);
+      setCreditDetails();
+      updateCreditLine();
+      const updatedValue = total * (degrees / 270);
+      myChart.data.datasets[datasetIndex].data[index] = updatedValue;
+      myChart.data.datasets[datasetIndex].data[index + 1] = total - updatedValue;
+      myChart.update(0);
+    }
+    function setCreditDetails() {
+      creditLine = getCreditFromPercentage(percentage);
+      const {
+        line,
+        deposit,
+        sign_up_fee,
+        credit_check,
+        apr
+      } = CREDIT_DETAILS[creditLine];
+      document.getElementById("security-deposit").innerHTML = deposit ? "$" + deposit.toLocaleString("en-US") + " over 4 Months" : "None";
+      document.getElementById("sign-up-fee").innerHTML = sign_up_fee ? "$" + sign_up_fee : "None";
+      document.getElementById("credit-check").innerHTML = !!credit_check ? "Credit Check Required" : "No Credit Check";
+      document.getElementById("credit-check-sub").innerHTML = !!credit_check ? "Soft and hard credit inquiry" : "Offer based solely on cash flow";
+      document.getElementById("apr").innerHTML = apr + "% APR";
+      document.getElementById("service-fee").innerHTML = "$3/Month";
+    }
+    function callback() {
+    }
+    function updateCreditLine() {
+      const mobileCLNumber = document.getElementById("cl-number");
+      mobileCLNumber.innerText = "$" + creditLine.toLocaleString("en-US");
+    }
+    function setMobileHtmlData() {
+      const newValue = CREDIT_DETAIL_KEYS[CREDIT_DETAIL_COUNT];
+      const {
+        deposit,
+        sign_up_fee,
+        credit_check,
+        apr
+      } = CREDIT_DETAILS[newValue];
+      document.getElementById("security-deposit").innerHTML = deposit ? "$" + deposit.toLocaleString("en-US") + " over 3 Months" : "None";
+      document.getElementById("sign-up-fee").innerHTML = sign_up_fee ? "$" + sign_up_fee : "None";
+      document.getElementById("credit-check").innerHTML = !!credit_check ? "Credit Check Required" : "No Credit Check";
+      document.getElementById("credit-check-sub").innerHTML = !!credit_check ? "Soft and hard credit inquiry" : "Offer based solely on cash flow";
+      document.getElementById("apr").innerHTML = apr + "% APR";
+      document.getElementById("service-fee").innerHTML = "$3/Month";
+    }
+    let CREDIT_DETAIL_KEYS = Object.keys(CREDIT_DETAILS);
+    let CREDIT_DETAIL_COUNT = 4;
+    function calcMinus() {
+      if (CREDIT_DETAIL_COUNT > 0) {
+        CREDIT_DETAIL_COUNT -= 1;
+        const newValue = CREDIT_DETAIL_KEYS[CREDIT_DETAIL_COUNT];
+        creditLine = Number(newValue);
+        setMobileHtmlData(Number(newValue));
+        updateCreditLine();
+      }
+    }
+    function calcPlus() {
+      if (CREDIT_DETAIL_COUNT < CREDIT_DETAIL_KEYS.length - 1) {
+        CREDIT_DETAIL_COUNT += 1;
+        const newValue = CREDIT_DETAIL_KEYS[CREDIT_DETAIL_COUNT];
+        creditLine = Number(newValue);
+        setMobileHtmlData(Number(newValue));
+        updateCreditLine();
+      }
+    }
+    document.getElementById("calc-minus").addEventListener("click", calcMinus);
+    document.getElementById("calc-plus").addEventListener("click", calcPlus);
+  };
+
+  // src/index.ts
+  window.Webflow || [];
+  window.Webflow.push(() => {
+    skipToMainContent();
+    currentYear();
+    autoPlayTabs();
+    charts();
+  });
+})();
+//# sourceMappingURL=index.js.map
