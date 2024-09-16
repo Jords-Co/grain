@@ -1,7 +1,7 @@
 /**
  * Auto Play Tabs.
  * 
- * @author <cabal@digerati.design>
+ * @author <Drew?>
  */
 export const autoPlayTabs = () => {
     /* Start Tabs */
@@ -45,12 +45,12 @@ export const autoPlayTabs = () => {
     */
     $('.layout219_tabs-link').click(function (e) {
         e.preventDefault();
-        $tab = $(this).data('wTab');
-        $image = $(`.w-tab-pane[data-w-tab="${$tab}"]`);
+        var $tab = $(this).data('wTab'),
+            $image = $(`.w-tab-pane[data-w-tab="${$tab}"]`);
         $('.layout219_tabs-link').removeClass('w--current');
         $('.w-tab-pane').removeClass('w--tab-active');
         $(this).addClass('w--current');
-        $($image).addClass('w--tab-active');
+        $image.addClass('w--tab-active');
         clearInterval(tabInterval);
         tabLoop2();
     });
