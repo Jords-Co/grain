@@ -150,7 +150,7 @@ var F = () => {
         }
         for (let s of o)
             g(s);
-        window.location.href.includes("webflow.io") || C(o)
+        window.location.href.includes("not.webflow.io") || C(o)
     }
     , g = async t => {
         if (window.fsComponents.process.has(t))
